@@ -1,7 +1,6 @@
 public class Produto {
     private String nomeProduto;
     private String categoria;
-    private String seuNome;
 
 
     public String getNomeProduto() {
@@ -18,13 +17,5 @@ public class Produto {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
-    }
-
-    public String getSeuNome() {
-        return seuNome;
-    }
-
-    public void setSeuNome(String seuNome) {
-        this.seuNome = seuNome;
     }
 }
