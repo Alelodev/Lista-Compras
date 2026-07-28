@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -9,9 +7,8 @@ public class Main {
         var leitura = new Scanner(System.in);
 
         boolean finalizar = false;
-        ArrayList<Produto> listaDeProdutos = new ArrayList<>();
         int caso = 0;
-        Menus menu = new Menus(listaDeProdutos, leitura, "produtos.csv");
+        Menus menu = new Menus( leitura, "produtos.csv");
         System.out.println("Qual o seu nome?");
         menu.setSeuNome(leitura.nextLine());
 

@@ -1,11 +1,12 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Menus {
     private Scanner leitura;
-    private ArrayList<Produto> listaDeProdutos;
     private String seuNome;
     private String nomeArquivo;
 
@@ -17,9 +18,8 @@ public class Menus {
         this.seuNome = seuNome;
     }
 
-    Menus(ArrayList<Produto> lista, Scanner leitura, String nomeArquivo) throws IOException {
+    Menus(Scanner leitura, String nomeArquivo) throws IOException {
         this.leitura = leitura;
-        this.listaDeProdutos = lista;
         this.nomeArquivo = nomeArquivo;
     }
 
@@ -43,39 +43,48 @@ public class Menus {
             }
         }
     }
-    int verLista(){
+    int verLista() throws FileNotFoundException {
         int b = 0;
-        if (listaDeProdutos.isEmpty()){
+        File arquivo = new File(nomeArquivo);
+        if (arquivo.length() == 0) {
             System.out.println("A lista esta vazia!");
-            return 0;
-        } else{
-            System.out.println("Lista de produtos: " + listaDeProdutos);
-            System.out.println("Deseja retornar ao menu? ou deseja rever a lista?");
-            System.out.println("Digite '1' para retornar ao menu");
-            System.out.println("Digite '2' para rever a lista");
-            b = leitura.nextInt();
-            if (b == 1) {
-                return 0;
-            } else {
-                return verLista();
-            }
-    }}
-    int adicionarProdutosLista(){
+        } else {
+                Scanner leitorArquivo = new Scanner(arquivo);
+            System.out.println("Produtos na lista de compras: ");
+                while (leitorArquivo.hasNextLine()) {
+                    String linha = leitorArquivo.nextLine();
+                    String[] partes = linha.split(";");
+                    System.out.println(partes[0]);}
+                System.out.println("Deseja retornar ao menu? ou deseja rever a lista?");
+                System.out.println("Digite '1' para retornar ao menu");
+                System.out.println("Digite '2' para rever a lista");
+                b = leitura.nextInt();
+                if (b == 1) {
+                    return 0;
+                } else {
+                    return verLista();
+                }
+        }
+        return b;
+    }
+    int adicionarProdutosLista() throws FileNotFoundException {
         boolean adicionar = true;
         while (adicionar) {
             int b = 0;
             Produto a = new Produto();
             leitura.nextLine();
             System.out.println("Qual produto deseja adicionar a lista? ");
-            a.setNomeProduto(leitura.nextLine());
+            a.setNomeProduto(leitura.nextLine().toUpperCase());
             a.setAdicionadoPor(getSeuNome());
-            listaDeProdutos.add(a);
-            System.out.println("Produto " + a.getNomeProduto() + " foi adicionado a lista!");
-
-            try (FileWriter writer = new FileWriter(nomeArquivo, true)) {
-                writer.write(a.getNomeProduto() + ";" + a.getAdicionadoPor() + "\n");
-            } catch (IOException e) {
-                System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
+            if (produtoJaExiste(a.getNomeProduto())) {
+                System.out.println("Este produto ja esta na lista!");
+            } else {
+                try (FileWriter writer = new FileWriter(nomeArquivo, true)) {
+                    writer.write(a.getNomeProduto() + ";" + a.getAdicionadoPor() + "\n");
+                } catch (IOException e) {
+                    System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
+                }
+                System.out.println("Produto " + a.getNomeProduto() + " foi adicionado a lista!");
             }
             System.out.println(" ");
             System.out.println("Deseja adicionar mais produtos a lista? ");
@@ -90,6 +99,7 @@ public class Menus {
                 System.out.println("Digite '1' para adicionar mais produtos");
                 System.out.println("Digite '2' para voltar ao menu");
             }
+
         }
         return 0;
     }
@@ -100,7 +110,10 @@ public class Menus {
         System.out.println("Digite '2' para cancelar");
         b = leitura.nextInt();
         if(b == 1){
-            listaDeProdutos.clear();
+            try (FileWriter writer = new FileWriter(nomeArquivo)) { }
+            catch (IOException e){
+                System.out.println("Erro ao salvar no arquivo: " + e.getMessage());
+            }
             System.out.println("A lista foi esvaziada!");
             return 0;
 
@@ -110,4 +123,16 @@ public class Menus {
 
         }
     }
-}
+    boolean produtoJaExiste(String nomeProduto) throws FileNotFoundException {
+        File arquivo = new File(nomeArquivo);
+        Scanner leitorArquivo = new Scanner(arquivo);
+        while (leitorArquivo.hasNextLine()) {
+            String linha = leitorArquivo.nextLine();
+            String[] partes = linha.split(";");
+            if(partes[0].equals(nomeProduto)){
+               return true;
+            }
+
+    }
+        return false;
+    }}

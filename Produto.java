@@ -1,6 +1,5 @@
 public class Produto {
     private String nomeProduto;
-    private String categoria;
     private String adicionadoPor;
 
     public String getAdicionadoPor() {
@@ -17,14 +16,6 @@ public class Produto {
 
     public void setNomeProduto(String nomeProduto) {
         this.nomeProduto = nomeProduto;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
     }
 
     @Override
