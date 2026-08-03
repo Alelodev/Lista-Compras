@@ -1,35 +1,9 @@
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Main {
     static void main() throws IOException {
-
-        var leitura = new Scanner(System.in);
-
-        boolean finalizar = false;
-        int caso = 0;
-        Menus menu = new Menus( leitura, "produtos.csv");
-        System.out.println("Qual o seu nome?");
-        menu.setSeuNome(leitura.nextLine());
-
-        while (!finalizar) {
-            switch (caso) {
-                case 0:
-                    caso = menu.exibirMenu();
-                    break;
-                case 1:
-                    caso = menu.verLista();
-                    break;
-                case 2:
-                    caso = menu.adicionarProdutosLista();
-                    break;
-                case 3:
-                    caso = menu.esvaziarLista();
-                    break;
-                case 4:
-                    finalizar = true;
-                    break;
-            }
-        }
+        Menus menu = new Menus("produtos.csv");
+        ServidorWeb servidor = new ServidorWeb(menu);
+        servidor.iniciar();
     }
 }
