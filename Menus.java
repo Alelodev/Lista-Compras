@@ -23,9 +23,10 @@ public class Menus {
     }
 
     void salvarProduto(String nomeProduto) throws IOException {
-
-        try (FileWriter writer = new FileWriter(nomeArquivo, true)) {
-            writer.write(nomeProduto + ";NAO" + "\n");
+        if (nomeProduto.matches("^[a-zA-Z\\s+]+$")) {
+            try (FileWriter writer = new FileWriter(nomeArquivo, true)) {
+                writer.write(nomeProduto + ";NAO" + "\n");
+            }
         }
     }
 

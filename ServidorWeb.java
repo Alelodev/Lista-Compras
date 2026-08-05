@@ -55,15 +55,22 @@ public class ServidorWeb {
                 try {
                     InputStream corpoRequisicao = exchange.getRequestBody();
                     Scanner leitorRequisicao = new Scanner(corpoRequisicao);
-                    String dados = leitorRequisicao.nextLine().split("=")[1].toUpperCase();
+                    String dados = leitorRequisicao.nextLine().split("=")[1].replace('+', ' ').toUpperCase();
                     corpoRequisicao.close();
 
                     String resposta;
-                    if (menu.produtoJaExiste(dados)) {
-                        resposta = "Este produto ja esta na lista!" + "<br><a href=\"/\">Retornar ao menu</a>"+"<br><a href=\"adicionar\">Adicione outro produto</a>";
+                    if (!dados.matches("^[a-zA-Z\\s]+$")) {
+                        resposta = "Erro: O nome do produto contém caracteres inválidos! Use apenas letras." +
+                                "<br><a href=\"/adicionar\">Tentar novamente</a>" +
+                                "<br><a href=\"/\">Retornar ao menu</a>";
+                    }else if (menu.produtoJaExiste(dados)) {
+                        resposta = "Este produto ja esta na lista!" + "<br><a href=\"/\">Retornar ao menu</a>"+
+                                "<br><a href=\"adicionar\">Adicione outro produto</a>";
                     } else {
                         menu.salvarProduto(dados);
-                        resposta = "Produto " + dados + " adicionado!" +"<br><a href=\"adicionar\">Adicione outro produto</a>" + "<br><a href=\"/\">Retornar ao menu</a>";
+                        resposta = "Produto " + dados + " adicionado!" +
+                                "<br><a href=\"adicionar\">Adicione outro produto</a>" +
+                                "<br><a href=\"/\">Retornar ao menu</a>";
                     }
 
                     exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
@@ -111,7 +118,8 @@ public class ServidorWeb {
                 } catch (IOException e) {
                     System.out.println("Erro ao esvaziar: " + e.getMessage());
                 }
-                String resposta = "Lista esvaziada!";
+                String resposta ="<h1>Lista esvaziada!</h1>" +
+                        "<a href=\"/\">Retornar ao menu</a>";
                 exchange.sendResponseHeaders(200, resposta.getBytes().length);
                 OutputStream saida = exchange.getResponseBody();
                 saida.write(resposta.getBytes());
@@ -130,11 +138,10 @@ public class ServidorWeb {
                     String[] pares = dados.split("&");
                     for (String par : pares) {
                         String[] paresArray = par.split("=");
-                        listaMarcados.add(paresArray[1]);
+                        listaMarcados.add(paresArray[1].replace('+', ' '));
                     }
                 }
                 corpoRequisicao.close();
-
                 menu.lerMarcador(listaMarcados);
 
                 String resposta = "<h1>Status atualizado!</h1><a href=\"/lista\">Voltar para a lista<br></a><a href=\"/\">Retornar ao menu</a>";
