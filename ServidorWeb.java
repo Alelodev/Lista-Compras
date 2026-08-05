@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -111,6 +112,35 @@ public class ServidorWeb {
                 OutputStream saida = exchange.getResponseBody();
                 saida.write(resposta.getBytes());
                 saida.close();
+            }
+        });
+
+        servidor.createContext("/marcado", (exchange) -> {
+            try {
+                InputStream corpoRequisicao = exchange.getRequestBody();
+                Scanner leitorRequisicao = new Scanner(corpoRequisicao);
+                String dados = "";
+                var listaMarcados = new ArrayList<String>();
+                if (leitorRequisicao.hasNextLine()) {
+                    dados = leitorRequisicao.nextLine();
+                    String[] pares = dados.split("&");
+                    for (String par : pares) {
+                        String[] paresArray = par.split("=");
+                        listaMarcados.add(paresArray[1]);
+                    }
+                }
+                corpoRequisicao.close();
+
+                menu.lerMarcador(listaMarcados);
+
+                String resposta = "<h1>Status atualizado!</h1><a href=\"/lista\">Voltar para a lista</a>";
+                exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+                exchange.sendResponseHeaders(200, resposta.getBytes().length);
+                OutputStream saida = exchange.getResponseBody();
+                saida.write(resposta.getBytes());
+                saida.close();
+            } catch (IOException e) {
+                System.out.println("Erro ao marcar produtos: " + e.getMessage());
             }
         });
 
