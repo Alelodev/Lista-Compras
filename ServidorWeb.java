@@ -21,10 +21,11 @@ public class ServidorWeb {
 
         servidor.createContext("/", (exchange) -> {
             String resposta;
-                 resposta = "<h1>Lista de Compras</h1>" +
-                        "<a href=\"/lista\">Ver lista</a><br>" +
-                        "<a href=\"/adicionar\">Adicionar produto</a><br>" +
-                        "<a href=\"/esvaziar\">Esvaziar lista</a>";
+            resposta = "<h1>Lista de Compras</h1>" +
+                    "<a href=\"/lista\">Ver lista</a><br>" +
+                    "<a href=\"/adicionar\">Adicionar produto</a><br>" +
+                    "<a href=\"/esvaziar\">Esvaziar lista</a><br>"
+                    ;
 
 
             exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
@@ -39,9 +40,11 @@ public class ServidorWeb {
 
             if (metodo.equals("GET")) {
                 String resposta = "<h1>Lista de Compras</h1>" +
+                        "<a >Digite apenas letras, outros caracteres sao invalidos!</a>" +
                         "<form action=\"/adicionar\" method=\"POST\">" +
                         "<input type=\"text\" name=\"produto\">" +
-                        "<button type=\"submit\">Adicionar</button>" +
+                        "<button type=\"submit\">Adicionar</button><br>" +
+                        "<a href=\"/\">Retornar ao menu</a>" +
                         "</form>";
                 exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
                 exchange.sendResponseHeaders(200, resposta.getBytes().length);
@@ -57,10 +60,10 @@ public class ServidorWeb {
 
                     String resposta;
                     if (menu.produtoJaExiste(dados)) {
-                        resposta = "Este produto ja esta na lista!";
+                        resposta = "Este produto ja esta na lista!" + "<br><a href=\"/\">Retornar ao menu</a>"+"<br><a href=\"adicionar\">Adicione outro produto</a>";
                     } else {
                         menu.salvarProduto(dados);
-                        resposta = "Produto " + dados + " adicionado!";
+                        resposta = "Produto " + dados + " adicionado!" +"<br><a href=\"adicionar\">Adicione outro produto</a>" + "<br><a href=\"/\">Retornar ao menu</a>";
                     }
 
                     exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
@@ -74,7 +77,7 @@ public class ServidorWeb {
             }
         });
 
-        servidor.createContext("/lista", (exchange) ->{
+        servidor.createContext("/lista", (exchange) -> {
             String resposta;
             try {
                 resposta = "<h1>Lista de Compras</h1>" +
@@ -87,14 +90,15 @@ public class ServidorWeb {
             OutputStream saida = exchange.getResponseBody();
             saida.write(resposta.getBytes());
             saida.close();
-                });
+        });
 
         servidor.createContext("/esvaziar", (exchange) -> {
             String metodo = exchange.getRequestMethod();
 
             if (metodo.equals("GET")) {
                 String resposta = "<form action=\"/esvaziar\" method=\"POST\">" +
-                        "<button type=\"submit\">apagar</button>" +
+                        "<button type=\"submit\">apagar</button><br>" +
+                        "<a href=\"/\">Retornar ao menu</a>" +
                         "</form>";
                 exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
                 exchange.sendResponseHeaders(200, resposta.getBytes().length);
@@ -133,7 +137,7 @@ public class ServidorWeb {
 
                 menu.lerMarcador(listaMarcados);
 
-                String resposta = "<h1>Status atualizado!</h1><a href=\"/lista\">Voltar para a lista</a>";
+                String resposta = "<h1>Status atualizado!</h1><a href=\"/lista\">Voltar para a lista<br></a><a href=\"/\">Retornar ao menu</a>";
                 exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
                 exchange.sendResponseHeaders(200, resposta.getBytes().length);
                 OutputStream saida = exchange.getResponseBody();
@@ -143,7 +147,6 @@ public class ServidorWeb {
                 System.out.println("Erro ao marcar produtos: " + e.getMessage());
             }
         });
-
 
 
         servidor.start();

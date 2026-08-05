@@ -23,6 +23,7 @@ public class Menus {
     }
 
     void salvarProduto(String nomeProduto) throws IOException {
+
         try (FileWriter writer = new FileWriter(nomeArquivo, true)) {
             writer.write(nomeProduto + ";NAO" + "\n");
         }
@@ -32,7 +33,8 @@ public class Menus {
         File arquivo = new File(nomeArquivo);
         String htmlLista = "";
         if (arquivo.length() == 0) {
-            htmlLista = "<p>A lista esta vazia!</p>";
+            htmlLista = "<p>A lista esta vazia!</p><br>" +
+                    "<a href=\"/\">Retornar ao menu</a>";
         } else {
             Scanner leitorArquivo = new Scanner(arquivo);
             while (leitorArquivo.hasNextLine()) {
@@ -48,7 +50,7 @@ public class Menus {
                 }
                 htmlLista = htmlLista + "<li><input type=\"checkbox\" name=\"produtosComprados\" value=\"" + nomeProduto + "\" " + checked + "> " + nomeProduto + "</li>";
             }
-            htmlLista = "<form action=\"/marcado\" method=\"POST\">" + "<ul>" + htmlLista + "</ul>" + "<button type=\"submit\">Salvar alterações</button>" + "</form>";
+            htmlLista = "<form action=\"/marcado\" method=\"POST\">" + "<ul>" + htmlLista + "</ul>" + "<button type=\"submit\">Salvar alterações</button><br>" + "<a href=\"/\">Retornar ao menu</a>" + "</form>";
         }
         return htmlLista;
     }
